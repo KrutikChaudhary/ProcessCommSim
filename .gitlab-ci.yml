@@ -1,0 +1,130 @@
+# use the official gcc image, based on debian
+# can use verions as well, like gcc:5.2
+# see https://hub.docker.com/_/gcc/
+image: gcc
+
+build:
+  tags:
+    - ugrad
+  stage: build
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /NO_TEST/
+  script:
+    - cd prosim
+    - if [ -f CMakeLists.txt ]; then cmake CMakeLists.txt; fi
+    - make
+  artifacts:
+    paths:
+      - prosim/prosim
+
+test00:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /NO_TEST/
+  script:
+    - cd prosim
+    - ./tests/test.sh 00 . prosim
+
+test01:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /NO_TEST/
+  script:
+    - cd prosim
+    - ./tests/test.sh 01 . prosim
+
+test02:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /NO_TEST/
+  script:
+    - cd prosim
+    - ./tests/test.sh 02 . prosim
+
+test03:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /NO_TEST/
+  script:
+    - cd prosim
+    - ./tests/test.sh 03 . prosim
+
+test04:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /NO_TEST/
+  script:
+    - cd prosim
+    - ./tests/test.sh 04 . prosim
+
+test05:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /NO_TEST/
+  script:
+    - cd prosim
+    - ./tests/test.sh 05 . prosim
+
+test06:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /NO_TEST/
+  script:
+    - cd prosim
+    - ./tests/test.sh 06 . prosim
+
+test07:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /NO_TEST/
+  script:
+    - cd prosim
+    - ./tests/test.sh 07 . prosim
+
+test08:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /NO_TEST/
+  script:
+    - cd prosim
+    - ./tests/test.sh 08 . prosim
+
+test09:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /NO_TEST/
+  script:
+    - cd prosim
+    - ./tests/test.sh 09 . prosim
+
