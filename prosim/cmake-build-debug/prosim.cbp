@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="prosim"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/tmp/tmp.on2Mg93hwe/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/tmp/tmp.on2Mg93hwe/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/tmp/tmp.on2Mg93hwe/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="prosim">
+				<Option output="/tmp/tmp.on2Mg93hwe/cmake-build-debug/prosim" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/tmp/tmp.on2Mg93hwe/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/10/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 prosim"/>
+					<CompileFile command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="prosim/fast">
+				<Option output="/tmp/tmp.on2Mg93hwe/cmake-build-debug/prosim" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/tmp/tmp.on2Mg93hwe/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/10/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 prosim/fast"/>
+					<CompileFile command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j32 -f &quot;/tmp/tmp.on2Mg93hwe/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/tmp/tmp.on2Mg93hwe/context.c">
+			<Option target="prosim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.on2Mg93hwe/context.h">
+			<Option target="prosim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.on2Mg93hwe/main.c">
+			<Option target="prosim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.on2Mg93hwe/prio_q.c">
+			<Option target="prosim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.on2Mg93hwe/prio_q.h">
+			<Option target="prosim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.on2Mg93hwe/process.c">
+			<Option target="prosim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.on2Mg93hwe/process.h">
+			<Option target="prosim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.on2Mg93hwe/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

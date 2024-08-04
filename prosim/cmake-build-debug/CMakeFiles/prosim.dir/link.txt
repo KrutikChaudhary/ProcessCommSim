@@ -1,0 +1,1 @@
+/usr/bin/cc -g CMakeFiles/prosim.dir/main.c.o CMakeFiles/prosim.dir/context.c.o CMakeFiles/prosim.dir/process.c.o CMakeFiles/prosim.dir/prio_q.c.o -o prosim  -pthread 
