@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 enum {
-    OP_HALT, OP_DOOP, OP_LOOP, OP_END, OP_BLOCK, OP_LAST
+    OP_HALT, OP_DOOP, OP_LOOP, OP_END, OP_BLOCK, OP_SEND, OP_RECV, OP_LAST
 };
 
 typedef struct opcode {

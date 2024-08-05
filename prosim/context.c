@@ -7,7 +7,7 @@
 #include <assert.h>
 #include "context.h"
 
-static const char *OPS [] = {"HALT", "DOOP", "LOOP", "END", "BLOCK", NULL};
+static const char *OPS [] = {"HALT", "DOOP", "LOOP", "END", "BLOCK","SEND","RECV", NULL};
 
 
 #define PUSH(s,v) (*(s++) = v)
@@ -72,7 +72,7 @@ extern context *context_load(FILE *fin) {
         for (int j = 0; OPS[j]; j++) {
             if (!strcmp(op, OPS[j])) {
                 cur->code[i].op = j;
-                if (j == OP_LOOP || j == OP_DOOP || j == OP_BLOCK) {
+                if (j == OP_LOOP || j == OP_DOOP || j == OP_BLOCK || j == OP_SEND || j == OP_RECV) {
                     if (fscanf(fin, "%d", &cur->code[i].arg) < 1) {
                         fprintf(stderr, "Bad input: Expecting argument to op on line %d in %s\n",
                                 i + 1, cur->name);
