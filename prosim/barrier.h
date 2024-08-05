@@ -6,7 +6,7 @@
 #define PROSIM_BARRIER_H
 
 #endif //PROSIM_BARRIER_H
-
+#include <pthread.h>
 typedef struct barrier_t {
     int max_threads;
     int cur_threads;
