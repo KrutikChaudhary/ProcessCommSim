@@ -7,7 +7,7 @@ extern barrier_t *barrier_new(int n){
     barrier_t * barr= calloc(1, sizeof(barrier_t));
     barr->cur_threads=0;
     barr->max_threads=n;
-    pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_init(&barr->lock, NULL);
     pthread_cond_init(&barr->cond, NULL);
     return barr;
 }
