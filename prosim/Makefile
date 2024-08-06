@@ -6,7 +6,7 @@ TARGET=prosim
 #########################################################################
 # All C files should be added below, after main.c, separated by spaces. #
 #########################################################################
-SRC_FILES=main.c context.c prio_q.c process.c barrier.c
+SRC_FILES=main.c context.c prio_q.c process.c barrier.c MessagePassingFacility.c
 
 all: $(TARGET)
 
