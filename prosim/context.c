@@ -72,7 +72,18 @@ extern context *context_load(FILE *fin) {
         for (int j = 0; OPS[j]; j++) {
             if (!strcmp(op, OPS[j])) {
                 cur->code[i].op = j;
-                if (j == OP_LOOP || j == OP_DOOP || j == OP_BLOCK || j == OP_SEND || j == OP_RECV) {
+                if(j == OP_SEND || j == OP_RECV){
+                    int address;
+                    if (fscanf(fin, "%d", &address) < 1) {
+                        fprintf(stderr, "Bad input: Expecting argument to op on line %d in %s\n",
+                                i + 1, cur->name);
+                        return NULL;
+                    }
+                    cur->code[i].arg=1;
+                    cur->code[i].addressNodeId=address / 100; //get node value of address where/from send/recv is performed
+                    cur->code[i].addressProcessId=address%100; //get process value of address where/from send/recv is performed
+                }
+                if (j == OP_LOOP || j == OP_DOOP || j == OP_BLOCK) {
                     if (fscanf(fin, "%d", &cur->code[i].arg) < 1) {
                         fprintf(stderr, "Bad input: Expecting argument to op on line %d in %s\n",
                                 i + 1, cur->name);

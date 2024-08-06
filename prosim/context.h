@@ -13,6 +13,8 @@ enum {
 typedef struct opcode {
     int op;                     /* primitive op code (see enum above) */
     int arg;                    /* argument value associated with the op code */
+    int addressNodeId;          /* address node value for send and recv*/
+    int addressProcessId;       /* address process value for send and recv*/
 } opcode;
 
 typedef struct context {
