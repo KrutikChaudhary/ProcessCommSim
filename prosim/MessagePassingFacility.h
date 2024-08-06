@@ -14,6 +14,6 @@ typedef struct MessageFacility {
     prio_q_t recvQ;
 }MessageFacility;
 
-extern void facilityInit();
-extern void send(context *sender, int nodeRecv, int procRecv);
-extern void recv(context *receiver, int nodeSend, int procSend);
+extern void facilityInit(MessageFacility *messageFacility);
+extern void send(MessageFacility *messageFacility,context *sender, int nodeRecv, int procRecv);
+extern void recv(MessageFacility *messageFacility, context *receiver, int nodeSend, int procSend);
