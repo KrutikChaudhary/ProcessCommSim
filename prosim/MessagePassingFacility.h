@@ -8,10 +8,11 @@
 #endif //PROSIM_MESSAGEPASSINGFACILITY_H
 #include "prio_q.h"
 #include "context.h"
-
+#include <pthread.h>
 typedef struct MessageFacility {
     prio_q_t sendQ;
     prio_q_t recvQ;
+    pthread_mutex_t lock;
 }MessageFacility;
 
 extern void facilityInit(MessageFacility *messageFacility);
