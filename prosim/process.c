@@ -7,7 +7,8 @@
 #include <pthread.h>
 #include "process.h"
 #include "prio_q.h"
-
+#include "barrier.h"
+#include "MessagePassingFacility.h"
 #define MAX_PROCS 100
 #define MAX_THREADS 100
 
@@ -16,12 +17,16 @@ enum {
     PROC_READY,
     PROC_RUNNING,
     PROC_BLOCKED,
-    PROC_FINISHED
+    PROC_FINISHED,
+    PROC_BLOCKED_SEND,
+    PROC_BLOCKED_RECV
 };
 
-static char *states[] = {"new", "ready", "running", "blocked", "finished"};
+static char *states[] = {"new", "ready", "running", "blocked", "finished", "blocked (send)", "blocked (recv)"};
 static int quantum;
 static prio_q_t *finished;
+static barrier_t *barr;
+static MessageFacility *messageFacility;
 
 /* Initialize the simulation
  * @params:
@@ -29,12 +34,14 @@ static prio_q_t *finished;
  * @returns:
  *   returns 1
  */
-extern void process_init(int cpu_quantum) {
+extern void process_init(int cpu_quantum,int num_threads) {
     /* Set up the finish queue and store the quantum
      * Assume the queue will be allocated
      */
     quantum = cpu_quantum;
     finished = prio_q_new();
+    barr = barrier_new(num_threads);
+    facilityInit(messageFacility);
 }
 
 /* Create a new node context
@@ -148,7 +155,12 @@ static void insert_in_queue(processor_t *cpu, context *proc, int next_op) {
         proc->state = PROC_BLOCKED;
         proc->duration += cpu->clock_time;
         prio_q_add(cpu->blocked, proc, proc->duration);
-    } else {
+    }else if(op == OP_SEND){
+        proc->state=PROC_BLOCKED_SEND;
+    } else if(op == OP_RECV){
+        proc->state=PROC_BLOCKED_RECV;
+    }
+    else {
         proc->state = PROC_FINISHED;
         process_finished(cpu, proc);
     }

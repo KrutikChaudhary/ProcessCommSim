@@ -59,7 +59,7 @@ int main() {
     args  = calloc(num_procs + 1, sizeof(thread_args));
     pthread_t *tid = calloc(num_threads, sizeof(pthread_t));
 
-    process_init(quantum);
+    process_init(quantum,num_threads);
 
     /* Load each process, if an error occurs, we just give up.
      */

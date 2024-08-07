@@ -21,7 +21,7 @@ typedef struct processor {
  * @returns:
  *   returns 1
  */
-extern void process_init(int cpu_quantum);
+extern void process_init(int cpu_quantum, int num_threads);
 
 /* Create a new node context
  * @params:
