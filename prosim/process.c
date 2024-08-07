@@ -220,6 +220,8 @@ extern int process_simulate(processor_t *cpu) {
             //printf("eww2\n");
             context *proc = prio_q_remove(&messageFacility->completed);
             insert_in_queue(cpu, proc, 1);
+            preempt |= cur != NULL && proc->state == PROC_READY &&
+                       actual_priority(cur) > actual_priority(proc);
         }
         //printf("ewfwfw2\n");
         while (!prio_q_empty(cpu->blocked)) {
