@@ -206,7 +206,7 @@ extern int process_simulate(processor_t *cpu) {
     /* We can only stop when all processes are in the finished state
      * no processes are readdy, running, or blocked
      */
-    while(!prio_q_empty(cpu->ready) || !prio_q_empty(cpu->blocked) || cur != NULL) {
+    while(!prio_q_empty(cpu->ready) || !prio_q_empty(cpu->blocked) || cur != NULL || !prio_q_empty(&messageFacility->sendQ) || !prio_q_empty(&messageFacility->recvQ) ||!prio_q_empty(&messageFacility->completed)) {
         //printf("ewfwfw\n");
         int preempt = 0;
 
@@ -260,8 +260,9 @@ extern int process_simulate(processor_t *cpu) {
                     cur->state=PROC_BLOCKED_RECV;
                     print_process(cpu,cur);
                     recv(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
+                } else {
+                    insert_in_queue(cpu, cur, cur->duration == 0);
                 }
-                insert_in_queue(cpu, cur, cur->duration == 0);
                 cur = NULL;
             }
         }
