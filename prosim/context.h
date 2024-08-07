@@ -35,6 +35,8 @@ typedef struct context {
     int wait_time;              /* number of clock ticks spent waiting in ready queue */
     int thread;                 /* node id to which process is to be assigned */
     int finished;               /* time process finished */
+    int sendCount;
+    int recvCount;
 } context;
 
 /* Move the instruction pointer to the next DOOP, BLOCK or HALT to be executed.

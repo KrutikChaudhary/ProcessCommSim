@@ -137,6 +137,13 @@ extern int context_next_op(context *cur) {
                 cur->block_count++;
                 cur->block_time += cur->code[cur->ip].arg;
                 return 1;
+            case OP_SEND:
+                cur->sendCount++;
+                cur->doop_time += cur->code[cur->ip].arg;
+                return 1;
+            case OP_RECV:
+                cur->recvCount++;
+                cur->doop_time += cur->code[cur->ip].arg;
             case OP_END:
                 /* The top of stack contains current loop info.
                  * Number of iterations is one-less now.
@@ -194,7 +201,7 @@ extern int context_cur_op(context *cur) {
  *   none
  */
 extern void context_stats(context *cur, FILE *fout) {
-    fprintf(fout,"| %5.5d | Proc %2.2d.%2.2d | Run %d, Block %d, Wait %d\n",
-            cur->finished, cur->thread, cur->id, cur->doop_time, cur->block_time, cur->wait_time);
+    fprintf(fout,"| %5.5d | Proc %2.2d.%2.2d | Run %d, Block %d, Wait %d, Sends %d, Recvs %d\n",
+            cur->finished, cur->thread, cur->id, cur->doop_time, cur->block_time, cur->wait_time, cur->sendCount, cur->recvCount);
 }
 
