@@ -7,8 +7,8 @@
 #include <pthread.h>
 #include "process.h"
 #include "prio_q.h"
-#include "barrier.h"
-#include "MessagePassingFacility.h"
+#include "barrier.c"
+#include "MessagePassingFacility.c"
 #define MAX_PROCS 100
 #define MAX_THREADS 100
 
