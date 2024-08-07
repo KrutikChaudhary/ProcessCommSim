@@ -42,8 +42,8 @@ extern void process_init(int cpu_quantum,int num_threads) {
     finished = prio_q_new();
 
     barr = barrier_new(num_threads);
-    printf("gjhgjhg\n");
-    facilityInit(messageFacility);
+    //printf("gjhgjhg\n");
+    facilityInit(&messageFacility);
 
 }
 
@@ -107,6 +107,7 @@ static void process_finished(processor_t *cpu, context *proc) {
     prio_q_add(finished, proc, order);
     result = pthread_mutex_unlock(&lock);
     assert(result == 0);
+    //printf("leaving");
 }
 
 /* Compute priority of process, depending on whether SJF or priority based scheduling is used
@@ -136,6 +137,7 @@ static void insert_in_queue(processor_t *cpu, context *proc, int next_op) {
     /* If current primitive is done, move to next
      */
     if (next_op) {
+        //printf("ok\n");
         context_next_op(proc);
         proc->duration = context_cur_duration(proc);
     }
@@ -147,7 +149,7 @@ static void insert_in_queue(processor_t *cpu, context *proc, int next_op) {
      * 2. If BLOCK, process goes into blocked queue
      * 3. If HALT, process is not queued
      */
-    if (op == OP_DOOP) {
+    if (op == OP_DOOP ) {
         proc->state = PROC_READY;
         prio_q_add(cpu->ready, proc, actual_priority(proc));
         proc->wait_count++;
@@ -158,15 +160,18 @@ static void insert_in_queue(processor_t *cpu, context *proc, int next_op) {
         proc->state = PROC_BLOCKED;
         proc->duration += cpu->clock_time;
         prio_q_add(cpu->blocked, proc, proc->duration);
-    }else if(op == OP_SEND){
-        proc->state=PROC_BLOCKED_SEND;
-    } else if(op == OP_RECV){
-        proc->state=PROC_BLOCKED_RECV;
+    }else if(op == OP_SEND || op == OP_RECV){
+        proc->state = PROC_READY;
+        prio_q_add(cpu->ready, proc, actual_priority(proc));
     }
+//    else if(op == OP_RECV){
+//
+//    }
     else {
         proc->state = PROC_FINISHED;
         process_finished(cpu, proc);
     }
+    //printf("dwdqdw");
     print_process(cpu, proc);
 }
 
@@ -202,12 +207,21 @@ extern int process_simulate(processor_t *cpu) {
      * no processes are readdy, running, or blocked
      */
     while(!prio_q_empty(cpu->ready) || !prio_q_empty(cpu->blocked) || cur != NULL) {
+        //printf("ewfwfw\n");
         int preempt = 0;
 
         /* Step 1: Unblock processes
          * If any of the unblocked processes have higher priority than current running process
          *   we will need to preempt the current running process
          */
+        assert(&messageFacility->completed);
+        //printf("ewfwfw2\n");
+        while(!prio_q_empty(&messageFacility->completed)){
+            //printf("eww2\n");
+            context *proc = prio_q_remove(&messageFacility->completed);
+            insert_in_queue(cpu, proc, 1);
+        }
+        //printf("ewfwfw2\n");
         while (!prio_q_empty(cpu->blocked)) {
             /* We can stop ff process at head of queue should not be unblocked
              */
@@ -227,6 +241,7 @@ extern int process_simulate(processor_t *cpu) {
             preempt |= cur != NULL && proc->state == PROC_READY &&
                     actual_priority(cur) > actual_priority(proc);
         }
+        //printf("ewfwfw3\n");
 
         /* Step 2: Update current running process
          */
@@ -237,6 +252,15 @@ extern int process_simulate(processor_t *cpu) {
             /* Process stops running if it is preempted, has used up their quantum, or has completed its DOOP
             */
             if (cur->duration == 0 || cpu_quantum == 0 || preempt) {
+                if(cur->code[cur->ip].op==OP_SEND){
+                    cur->state=PROC_BLOCKED_SEND;
+                    print_process(cpu,cur);
+                    send(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
+                }else if(cur->code[cur->ip].op==OP_RECV){
+                    cur->state=PROC_BLOCKED_RECV;
+                    print_process(cpu,cur);
+                    recv(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
+                }
                 insert_in_queue(cpu, cur, cur->duration == 0);
                 cur = NULL;
             }

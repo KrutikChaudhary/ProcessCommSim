@@ -12,9 +12,10 @@
 typedef struct MessageFacility {
     prio_q_t sendQ;
     prio_q_t recvQ;
+    prio_q_t completed;
     pthread_mutex_t lock;
 }MessageFacility;
 
-extern void facilityInit(MessageFacility *messageFacility);
+extern void facilityInit(MessageFacility **messageFacility);
 extern void send(MessageFacility *messageFacility,context *sender, int nodeRecv, int procRecv);
 extern void recv(MessageFacility *messageFacility, context *receiver, int nodeSend, int procSend);

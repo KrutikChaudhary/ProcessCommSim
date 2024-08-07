@@ -74,6 +74,7 @@ extern context *context_load(FILE *fin) {
                 cur->code[i].op = j;
                 if(j == OP_SEND || j == OP_RECV){
                     int address;
+                    //printf("dj\n");
                     if (fscanf(fin, "%d", &address) < 1) {
                         fprintf(stderr, "Bad input: Expecting argument to op on line %d in %s\n",
                                 i + 1, cur->name);
@@ -121,6 +122,7 @@ extern int context_next_op(context *cur) {
      */
     for (;;) {
         cur->ip++;
+        //printf("%d\n",cur->code[cur->ip].op);
         switch (cur->code[cur->ip].op) {
             case OP_LOOP:
                 /* Use a stack to keep track of nested loops by pushing
@@ -144,6 +146,7 @@ extern int context_next_op(context *cur) {
             case OP_RECV:
                 cur->recvCount++;
                 cur->doop_time += cur->code[cur->ip].arg;
+                return 1;
             case OP_END:
                 /* The top of stack contains current loop info.
                  * Number of iterations is one-less now.
