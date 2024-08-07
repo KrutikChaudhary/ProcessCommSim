@@ -40,8 +40,11 @@ extern void process_init(int cpu_quantum,int num_threads) {
      */
     quantum = cpu_quantum;
     finished = prio_q_new();
+
     barr = barrier_new(num_threads);
+    printf("gjhgjhg\n");
     facilityInit(messageFacility);
+
 }
 
 /* Create a new node context

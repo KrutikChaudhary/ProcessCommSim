@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "MessagePassingFacility.h"
 extern void facilityInit(MessageFacility *messageFacility){
-//    messageFacility = (MessageFacility *)calloc(1, sizeof(MessageFacility));
+    messageFacility = calloc(1, sizeof(MessageFacility));
     messageFacility->recvQ=*prio_q_new();
     messageFacility->sendQ=*prio_q_new();
     pthread_mutex_init(&messageFacility->lock, NULL);
