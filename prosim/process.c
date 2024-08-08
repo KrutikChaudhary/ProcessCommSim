@@ -149,7 +149,7 @@ static void insert_in_queue(processor_t *cpu, context *proc, int next_op) {
      * 2. If BLOCK, process goes into blocked queue
      * 3. If HALT, process is not queued
      */
-    if (op == OP_DOOP ) {
+    if (op == OP_DOOP) {
         proc->state = PROC_READY;
         prio_q_add(cpu->ready, proc, actual_priority(proc));
         proc->wait_count++;
@@ -303,7 +303,10 @@ extern int process_simulate(processor_t *cpu) {
         if (cur == NULL && !prio_q_empty(cpu->ready)) {
             cur = prio_q_remove(cpu->ready);
             //printf("hsdjkhskdf %d\n", cpu->clock_time - cur->enqueue_time);
-            cur->wait_time += cpu->clock_time - cur->enqueue_time;
+            if(cur->code[cur->ip].op==OP_DOOP){
+                cur->wait_time += cpu->clock_time - cur->enqueue_time;
+            }
+
             cpu_quantum = quantum;
             cur->state = PROC_RUNNING;
             print_process(cpu, cur);
