@@ -303,9 +303,9 @@ extern int process_simulate(processor_t *cpu) {
         if (cur == NULL && !prio_q_empty(cpu->ready)) {
             cur = prio_q_remove(cpu->ready);
             //printf("hsdjkhskdf %d\n", cpu->clock_time - cur->enqueue_time);
-            if(cur->code[cur->ip].op==OP_DOOP){
+            //if(cur->code[cur->ip].op==OP_DOOP){
                 cur->wait_time += cpu->clock_time - cur->enqueue_time;
-            }
+            //}
 
             cpu_quantum = quantum;
             cur->state = PROC_RUNNING;
