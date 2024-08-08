@@ -235,11 +235,11 @@ extern int process_simulate(processor_t *cpu) {
             //printf("eww2\n");
             context *proc = prio_q_remove(&messageFacility->completed);
             insert_in_queue(cpu, proc, 1);
-            if(cur==NULL && !prio_q_empty(cpu->ready)){
-                cur = prio_q_remove(cpu->ready);
-                cur->state = PROC_RUNNING;
-                print_process(cpu, cur);
-            }
+//            if(cur==NULL && !prio_q_empty(cpu->ready)){
+//                cur = prio_q_remove(cpu->ready);
+//                cur->state = PROC_RUNNING;
+//                print_process(cpu, cur);
+//            }
 //            preempt |= cur != NULL && proc->state == PROC_READY &&
 //                       actual_priority(cur) > actual_priority(proc);
         }
@@ -275,23 +275,24 @@ extern int process_simulate(processor_t *cpu) {
 
             /* Process stops running if it is preempted, has used up their quantum, or has completed its DOOP
             */
-            if ((cur->duration == 0 || cpu_quantum == 0 ||  preempt) &&  cur->code[cur->ip].op!=OP_SEND && cur->code[cur->ip].op!=OP_RECV ) {
-//                 else {
+            if ((cur->duration == 0 || cpu_quantum == 0 ||  preempt) ||  cur->code[cur->ip].op==OP_SEND || cur->code[cur->ip].op==OP_RECV ) {
+                if(cur->code[cur->ip].op==OP_SEND){
+                    cur->state=PROC_BLOCKED_SEND;
+                    print_process(cpu,cur);
+                    send(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
+                    cur = NULL;
+                }else if(cur->code[cur->ip].op==OP_RECV){
+                    //tprintf("svsv\n");
+                    cur->state=PROC_BLOCKED_RECV;
+                    print_process(cpu,cur);
+                    recv(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
+                    cur = NULL;
+                }
+                 else {
                     insert_in_queue(cpu, cur, cur->duration == 0);
                     cur = NULL;
-//                }
+                }
 
-            } else if(cur->code[cur->ip].op==OP_SEND){
-                cur->state=PROC_BLOCKED_SEND;
-                print_process(cpu,cur);
-                send(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
-                cur = NULL;
-            }else if(cur->code[cur->ip].op==OP_RECV){
-                printf("svsv\n");
-                cur->state=PROC_BLOCKED_RECV;
-                print_process(cpu,cur);
-                recv(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
-                cur = NULL;
             }
         }
 
