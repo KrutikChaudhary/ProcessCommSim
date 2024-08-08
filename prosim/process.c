@@ -26,6 +26,7 @@ static char *states[] = {"new", "ready", "running", "blocked", "finished", "bloc
 static int quantum;
 static prio_q_t *finished;
 static barrier_t *barr;
+static barrier_t *barr2;
 static MessageFacility *messageFacility;
 
 /* Initialize the simulation
@@ -42,6 +43,7 @@ extern void process_init(int cpu_quantum,int num_threads) {
     finished = prio_q_new();
 
     barr = barrier_new(num_threads);
+    barr2 = barrier_new(num_threads);
     //printf("gjhgjhg\n");
     facilityInit(&messageFacility);
 
@@ -206,6 +208,7 @@ extern int process_simulate(processor_t *cpu) {
     /* We can only stop when all processes are in the finished state
      * no processes are readdy, running, or blocked
      */
+    barrier_wait(barr2);
     while(!prio_q_empty(cpu->ready) || !prio_q_empty(cpu->blocked) || cur != NULL || !prio_q_empty(&messageFacility->sendQ) || !prio_q_empty(&messageFacility->recvQ) ||!prio_q_empty(&messageFacility->completed)) {
         //printf("ewfwfw\n");
         int preempt = 0;
@@ -314,7 +317,7 @@ extern int process_simulate(processor_t *cpu) {
         barrier_wait(barr);
         cpu->clock_time++;
     }
-
+    barrier_wait(barr2);
     barrier_done(barr);
 
     /* next clock tick
