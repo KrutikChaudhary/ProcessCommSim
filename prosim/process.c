@@ -287,6 +287,7 @@ extern int process_simulate(processor_t *cpu) {
                 send(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
                 cur = NULL;
             }else if(cur->code[cur->ip].op==OP_RECV){
+                printf("svsv\n");
                 cur->state=PROC_BLOCKED_RECV;
                 print_process(cpu,cur);
                 recv(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
