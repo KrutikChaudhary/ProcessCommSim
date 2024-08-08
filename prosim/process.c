@@ -315,11 +315,11 @@ extern int process_simulate(processor_t *cpu) {
             cur->state = PROC_RUNNING;
             print_process(cpu, cur);
         }
-        barrier_wait(barr);
+        //barrier_wait(barr);
         cpu->clock_time++;
     }
     //
-    barrier_done(barr);
+    //barrier_done(barr);
 
     /* next clock tick
      */
