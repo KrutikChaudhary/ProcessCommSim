@@ -234,6 +234,7 @@ extern int process_simulate(processor_t *cpu) {
         while(!prio_q_empty(&messageFacility->completed)){
             //printf("eww2\n");
             context *proc = prio_q_remove(&messageFacility->completed);
+            proc->enqueue_time=cpu->clock_time;
             insert_in_queue(cpu, proc, 1);
 //            if(cur==NULL && !prio_q_empty(cpu->ready)){
 //                cur = prio_q_remove(cpu->ready);
