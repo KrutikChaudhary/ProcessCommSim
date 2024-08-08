@@ -245,8 +245,8 @@ extern int process_simulate(processor_t *cpu) {
 //                cur->state = PROC_RUNNING;
 //                print_process(cpu, cur);
 //            }
-//            preempt |= cur != NULL && proc->state == PROC_READY &&
-//                       actual_priority(cur) > actual_priority(proc);
+            preempt |= cur != NULL && proc->state == PROC_READY &&
+                       actual_priority(cur) > actual_priority(proc);
         }
         //printf("ewfwfw2\n");
         while (!prio_q_empty(cpu->blocked)) {
@@ -315,11 +315,12 @@ extern int process_simulate(processor_t *cpu) {
             cur->state = PROC_RUNNING;
             print_process(cpu, cur);
         }
-        //barrier_wait(barr);
+        //printf("fwefew\n");
+        barrier_wait(barr);
         cpu->clock_time++;
     }
     //
-    //barrier_done(barr);
+    barrier_done(barr);
 
     /* next clock tick
      */
