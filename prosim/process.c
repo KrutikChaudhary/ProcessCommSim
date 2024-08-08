@@ -272,7 +272,16 @@ extern int process_simulate(processor_t *cpu) {
         if (cur != NULL) {
             cur->duration--;
             cpu_quantum--;
-            if(cur->code[cur->ip].op==OP_SEND){
+
+            /* Process stops running if it is preempted, has used up their quantum, or has completed its DOOP
+            */
+            if ((cur->duration == 0 || cpu_quantum == 0 ||  preempt) &&  cur->code[cur->ip].op!=OP_SEND && cur->code[cur->ip].op!=OP_RECV ) {
+//                 else {
+                    insert_in_queue(cpu, cur, cur->duration == 0);
+                    cur = NULL;
+//                }
+
+            } else if(cur->code[cur->ip].op==OP_SEND){
                 cur->state=PROC_BLOCKED_SEND;
                 print_process(cpu,cur);
                 send(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
@@ -282,15 +291,6 @@ extern int process_simulate(processor_t *cpu) {
                 print_process(cpu,cur);
                 recv(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
                 cur = NULL;
-            }
-            /* Process stops running if it is preempted, has used up their quantum, or has completed its DOOP
-            */
-            else if (cur->duration == 0 || cpu_quantum == 0 || preempt) {
-//                 else {
-                    insert_in_queue(cpu, cur, cur->duration == 0);
-                    cur = NULL;
-//                }
-
             }
         }
 
