@@ -216,10 +216,30 @@ extern int process_simulate(processor_t *cpu) {
          */
         assert(&messageFacility->completed);
         //printf("ewfwfw2\n");
+
+//
+//        if(!prio_q_empty(&messageFacility->completed)){
+//            //printf("eww2\n");
+//            context *proc = prio_q_remove(&messageFacility->completed);
+//            insert_in_queue(cpu, proc, 1);
+//            if(cur==NULL && !prio_q_empty(cpu->ready)){
+//                cur = prio_q_remove(cpu->ready);
+//                cur->state = PROC_RUNNING;
+//                print_process(cpu, cur);
+//            }
+////            preempt |= cur != NULL && proc->state == PROC_READY &&
+////                       actual_priority(cur) > actual_priority(proc);
+//        }
+
         while(!prio_q_empty(&messageFacility->completed)){
             //printf("eww2\n");
             context *proc = prio_q_remove(&messageFacility->completed);
             insert_in_queue(cpu, proc, 1);
+            if(cur==NULL && !prio_q_empty(cpu->ready)){
+                cur = prio_q_remove(cpu->ready);
+                cur->state = PROC_RUNNING;
+                print_process(cpu, cur);
+            }
             preempt |= cur != NULL && proc->state == PROC_READY &&
                        actual_priority(cur) > actual_priority(proc);
         }
@@ -264,6 +284,7 @@ extern int process_simulate(processor_t *cpu) {
                     recv(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
                 } else {
                     insert_in_queue(cpu, cur, cur->duration == 0);
+
                 }
                 cur = NULL;
             }
@@ -274,14 +295,17 @@ extern int process_simulate(processor_t *cpu) {
          */
         if (cur == NULL && !prio_q_empty(cpu->ready)) {
             cur = prio_q_remove(cpu->ready);
+            //printf("hsdjkhskdf %d\n", cpu->clock_time - cur->enqueue_time);
             cur->wait_time += cpu->clock_time - cur->enqueue_time;
             cpu_quantum = quantum;
             cur->state = PROC_RUNNING;
             print_process(cpu, cur);
         }
-
+        barrier_wait(barr);
         cpu->clock_time++;
     }
+
+    barrier_done(barr);
 
     /* next clock tick
      */

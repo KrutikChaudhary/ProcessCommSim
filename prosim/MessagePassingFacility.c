@@ -24,8 +24,8 @@ extern void send(MessageFacility *messageFacility,context *sender, int nodeRecv,
         if(cur->thread==nodeRecv && cur->id==procRecv){
             //printf("Sended\n");
             found = 1;
-            prio_q_add(&messageFacility->completed,sender,1);
-            prio_q_add(&messageFacility->completed,cur,1);
+            prio_q_add(&messageFacility->completed,sender,sender->id);
+            prio_q_add(&messageFacility->completed,cur,cur->id);
             break;
         }
         prio_q_add(&temp,cur,cur->id);
@@ -49,8 +49,8 @@ extern void recv(MessageFacility *messageFacility, context *receiver, int nodeSe
         if(cur->thread==nodeSend && cur->id==procSend){
             //printf("Received\n");
             found = 1;
-            prio_q_add(&messageFacility->completed,receiver,1);
-            prio_q_add(&messageFacility->completed,cur,1);
+            prio_q_add(&messageFacility->completed,receiver,receiver->id);
+            prio_q_add(&messageFacility->completed,cur,cur->id);
             break;
         }
         prio_q_add(&temp,cur,cur->id);
