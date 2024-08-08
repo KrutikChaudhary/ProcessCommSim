@@ -217,21 +217,8 @@ extern int process_simulate(processor_t *cpu) {
         assert(&messageFacility->completed);
         //printf("ewfwfw2\n");
 
-
-        if(!prio_q_empty(&messageFacility->completed)){
-            //printf("eww2\n");
-            context *proc = prio_q_remove(&messageFacility->completed);
-            insert_in_queue(cpu, proc, 1);
-            if(cur==NULL && !prio_q_empty(cpu->ready)){
-                cur = prio_q_remove(cpu->ready);
-                cur->state = PROC_RUNNING;
-                print_process(cpu, cur);
-            }
-            preempt |= cur != NULL && proc->state == PROC_READY &&
-                       actual_priority(cur) > actual_priority(proc);
-        }
-
-//        while(!prio_q_empty(&messageFacility->completed)){
+//
+//        if(!prio_q_empty(&messageFacility->completed)){
 //            //printf("eww2\n");
 //            context *proc = prio_q_remove(&messageFacility->completed);
 //            insert_in_queue(cpu, proc, 1);
@@ -243,6 +230,19 @@ extern int process_simulate(processor_t *cpu) {
 //            preempt |= cur != NULL && proc->state == PROC_READY &&
 //                       actual_priority(cur) > actual_priority(proc);
 //        }
+
+        while(!prio_q_empty(&messageFacility->completed)){
+            //printf("eww2\n");
+            context *proc = prio_q_remove(&messageFacility->completed);
+            insert_in_queue(cpu, proc, 1);
+            if(cur==NULL && !prio_q_empty(cpu->ready)){
+                cur = prio_q_remove(cpu->ready);
+                cur->state = PROC_RUNNING;
+                print_process(cpu, cur);
+            }
+//            preempt |= cur != NULL && proc->state == PROC_READY &&
+//                       actual_priority(cur) > actual_priority(proc);
+        }
         //printf("ewfwfw2\n");
         while (!prio_q_empty(cpu->blocked)) {
             /* We can stop ff process at head of queue should not be unblocked
