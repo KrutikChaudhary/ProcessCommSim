@@ -14,8 +14,8 @@ typedef struct MessageFacility {
     prio_q_t recvQ;
     prio_q_t completed;
     pthread_mutex_t lock;
-}MessageFacility;
+}MessageFacility_t;
 
-extern void facilityInit(MessageFacility **messageFacility);
-extern void send(MessageFacility *messageFacility,context *sender, int nodeRecv, int procRecv);
-extern void recv(MessageFacility *messageFacility, context *receiver, int nodeSend, int procSend);
+extern void facilityInit(MessageFacility_t **messageFacility);
+extern void send(MessageFacility_t *messageFacility, context *sender, int nodeRecv, int procRecv);
+extern void recv(MessageFacility_t *messageFacility, context *receiver, int nodeSend, int procSend);

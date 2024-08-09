@@ -27,7 +27,7 @@ static int quantum;
 static prio_q_t *finished;
 static barrier_t *barr;
 static barrier_t *barr2;
-static MessageFacility *messageFacility;
+static MessageFacility_t *messageFacility;
 
 /* Initialize the simulation
  * @params:

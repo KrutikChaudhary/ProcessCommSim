@@ -3,8 +3,8 @@
 //
 #include <stdlib.h>
 #include "MessagePassingFacility.h"
-extern void facilityInit(MessageFacility **messageFacility) {
-    *messageFacility = (MessageFacility *)calloc(1, sizeof(MessageFacility));
+extern void facilityInit(MessageFacility_t **messageFacility) {
+    *messageFacility = (MessageFacility_t *)calloc(1, sizeof(MessageFacility_t));
     if (*messageFacility == NULL) {
         printf("Failed to memory calloc\n");
         return;
@@ -15,7 +15,7 @@ extern void facilityInit(MessageFacility **messageFacility) {
 
     pthread_mutex_init(&(*messageFacility)->lock, NULL);
 }
-extern void send(MessageFacility *messageFacility,context *sender, int nodeRecv, int procRecv){
+extern void send(MessageFacility_t *messageFacility, context *sender, int nodeRecv, int procRecv){
     pthread_mutex_lock(&messageFacility->lock);
     prio_q_t temp = *prio_q_new();
     int found = 0;
@@ -41,7 +41,7 @@ extern void send(MessageFacility *messageFacility,context *sender, int nodeRecv,
 
     pthread_mutex_unlock(&messageFacility->lock);
 }
-extern void recv(MessageFacility *messageFacility, context *receiver, int nodeSend, int procSend){
+extern void recv(MessageFacility_t *messageFacility, context *receiver, int nodeSend, int procSend){
     pthread_mutex_lock(&messageFacility->lock);
     prio_q_t temp = *prio_q_new();
     int found = 0;
