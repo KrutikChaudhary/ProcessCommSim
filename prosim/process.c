@@ -166,9 +166,7 @@ static void insert_in_queue(processor_t *cpu, context *proc, int next_op) {
         proc->state = PROC_READY;
         prio_q_add(cpu->ready, proc, actual_priority(proc));
     }
-//    else if(op == OP_RECV){
-//
-//    }
+
     else {
         proc->state = PROC_FINISHED;
         process_finished(cpu, proc);
@@ -209,7 +207,7 @@ extern int process_simulate(processor_t *cpu) {
      * no processes are readdy, running, or blocked
      */
     //barrier_wait(barr2);
-    while(!prio_q_empty(cpu->ready) || !prio_q_empty(cpu->blocked) || cur != NULL || !prio_q_empty(&messageFacility->sendQ) || !prio_q_empty(&messageFacility->recvQ) ||!prio_q_empty(&messageFacility->completed)) {
+    while(!prio_q_empty(cpu->ready) || !prio_q_empty(cpu->blocked) || cur != NULL ||!prio_q_empty(&messageFacility->completed)) {
         //printf("ewfwfw\n");
         //barrier_done(barr2);
         int preempt = 0;
@@ -244,6 +242,12 @@ extern int process_simulate(processor_t *cpu) {
 //                cur = prio_q_remove(cpu->ready);
 //                cur->state = PROC_RUNNING;
 //                print_process(cpu, cur);
+//            }
+//            if(actual_priority(proc)< actual_priority(cur)){
+//
+//                insert_in_queue(cpu,cur,1);
+//                cur=proc;
+//                print_process(cpu,proc);
 //            }
             preempt |= cur != NULL && proc->state == PROC_READY &&
                        actual_priority(cur) > actual_priority(proc);
