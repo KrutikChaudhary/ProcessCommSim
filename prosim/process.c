@@ -7,8 +7,8 @@
 #include <pthread.h>
 #include "process.h"
 #include "prio_q.h"
-#include "barrier.c"
-#include "MessagePassingFacility.c"
+#include "barrier.h"
+#include "MessagePassingFacility.h"
 #define MAX_PROCS 100
 #define MAX_THREADS 100
 
@@ -249,6 +249,7 @@ extern int process_simulate(processor_t *cpu) {
 //                cur=proc;
 //                print_process(cpu,proc);
 //            }
+
             preempt |= cur != NULL && proc->state == PROC_READY &&
                        actual_priority(cur) > actual_priority(proc);
         }
