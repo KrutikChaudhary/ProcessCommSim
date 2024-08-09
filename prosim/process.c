@@ -7,8 +7,8 @@
 #include <pthread.h>
 #include "process.h"
 #include "prio_q.h"
-#include "barrier.h"
-#include "MessagePassingFacility.h"
+#include "barrier.c"
+#include "MessagePassingFacility.c"
 #define MAX_PROCS 100
 #define MAX_THREADS 100
 
@@ -206,10 +206,11 @@ extern int process_simulate(processor_t *cpu) {
     /* We can only stop when all processes are in the finished state
      * no processes are readdy, running, or blocked
      */
-    //barrier_wait(barr2);
+
     while(!prio_q_empty(cpu->ready) || !prio_q_empty(cpu->blocked) || cur != NULL || !prio_q_empty(&messageFacility->sendQ) || !prio_q_empty(&messageFacility->recvQ) ||!prio_q_empty(&messageFacility->completed)) {
         //printf("ewfwfw\n");
-        //barrier_done(barr2);
+        barrier_wait(barr2);
+
         int preempt = 0;
 
         /* Step 1: Unblock processes
@@ -324,7 +325,7 @@ extern int process_simulate(processor_t *cpu) {
         barrier_wait(barr);
         cpu->clock_time++;
     }
-    //
+    barrier_done(barr2);
     barrier_done(barr);
 
     /* next clock tick
