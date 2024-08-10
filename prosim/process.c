@@ -24,9 +24,10 @@ enum {
 
 static char *states[] = {"new", "ready", "running", "blocked", "finished", "blocked (send)", "blocked (recv)"};
 static int quantum;
-static prio_q_t *finished;
+static prio_q_t *finished;//finished queue to keep finished processes.
+
+//barrier and message passing facility, for clock synchronization and message passing.
 static barrier_t *barr;
-static barrier_t *barr2;
 static MessageFacility_t *messageFacility;
 
 /* Initialize the simulation
@@ -41,10 +42,8 @@ extern void process_init(int cpu_quantum,int num_threads) {
      */
     quantum = cpu_quantum;
     finished = prio_q_new();
-
+    //initialize barrier and message passing facility, for clock synchronization and message passing.
     barr = barrier_new(num_threads);
-    barr2 = barrier_new(num_threads);
-    //printf("gjhgjhg\n");
     facilityInit(&messageFacility);
 
 }
@@ -109,7 +108,6 @@ static void process_finished(processor_t *cpu, context *proc) {
     prio_q_add(finished, proc, order);
     result = pthread_mutex_unlock(&lock);
     assert(result == 0);
-    //printf("leaving");
 }
 
 /* Compute priority of process, depending on whether SJF or priority based scheduling is used
@@ -139,7 +137,6 @@ static void insert_in_queue(processor_t *cpu, context *proc, int next_op) {
     /* If current primitive is done, move to next
      */
     if (next_op) {
-        //printf("ok\n");
         context_next_op(proc);
         proc->duration = context_cur_duration(proc);
     }
@@ -147,11 +144,11 @@ static void insert_in_queue(processor_t *cpu, context *proc, int next_op) {
     int op = context_cur_op(proc);
 
     /* 3 cases:
-     * 1. If DOOP, process goes into ready queue
+     * 1. If DOOP/SEND/RECV, process goes into ready queue
      * 2. If BLOCK, process goes into blocked queue
      * 3. If HALT, process is not queued
      */
-    if (op == OP_DOOP) {
+    if (op == OP_DOOP || op == OP_SEND || op == OP_RECV) {
         proc->state = PROC_READY;
         prio_q_add(cpu->ready, proc, actual_priority(proc));
         proc->wait_count++;
@@ -162,16 +159,10 @@ static void insert_in_queue(processor_t *cpu, context *proc, int next_op) {
         proc->state = PROC_BLOCKED;
         proc->duration += cpu->clock_time;
         prio_q_add(cpu->blocked, proc, proc->duration);
-    }else if(op == OP_SEND || op == OP_RECV){
-        proc->state = PROC_READY;
-        prio_q_add(cpu->ready, proc, actual_priority(proc));
-    }
-
-    else {
+    } else {
         proc->state = PROC_FINISHED;
         process_finished(cpu, proc);
     }
-    //printf("dwdqdw");
     print_process(cpu, proc);
 }
 
@@ -206,55 +197,26 @@ extern int process_simulate(processor_t *cpu) {
     /* We can only stop when all processes are in the finished state
      * no processes are readdy, running, or blocked
      */
-
     while(!prio_q_empty(cpu->ready) || !prio_q_empty(cpu->blocked) || cur != NULL || !prio_q_empty(&messageFacility->sendQ) || !prio_q_empty(&messageFacility->recvQ) ||!prio_q_empty(&messageFacility->completed)) {
-        //printf("ewfwfw\n");
-        barrier_wait(barr2);
-
         int preempt = 0;
 
         /* Step 1: Unblock processes
-         * If any of the unblocked processes have higher priority than current running process
+         * If any of the unblocked processes have completed blocking from send/recv/normal-blocking have higher priority than current running process
          *   we will need to preempt the current running process
          */
         assert(&messageFacility->completed);
-        //printf("ewfwfw2\n");
-
-//
-//        if(!prio_q_empty(&messageFacility->completed)){
-//            //printf("eww2\n");
-//            context *proc = prio_q_remove(&messageFacility->completed);
-//            insert_in_queue(cpu, proc, 1);
-//            if(cur==NULL && !prio_q_empty(cpu->ready)){
-//                cur = prio_q_remove(cpu->ready);
-//                cur->state = PROC_RUNNING;
-//                print_process(cpu, cur);
-//            }
-//            preempt |= cur != NULL && proc->state == PROC_READY &&
-//                       actual_priority(cur) > actual_priority(proc);
-//        }
-
-        while(!prio_q_empty(&messageFacility->completed)){
-            //printf("eww2\n");
+        while(!prio_q_empty(&messageFacility->completed)){//if finished send and recv
+            //remove from completed
             context *proc = prio_q_remove(&messageFacility->completed);
+            //reset enqueue time as not needed for this queue
             proc->enqueue_time=cpu->clock_time;
-            insert_in_queue(cpu, proc, 1);
-//            if(cur==NULL && !prio_q_empty(cpu->ready)){
-//                cur = prio_q_remove(cpu->ready);
-//                cur->state = PROC_RUNNING;
-//                print_process(cpu, cur);
-//            }
-//            if(actual_priority(proc)< actual_priority(cur)){
-//
-//                insert_in_queue(cpu,cur,1);
-//                cur=proc;
-//                print_process(cpu,proc);
-//            }
 
+            //insert in appropriate simulation queue and preempt if needed
+            insert_in_queue(cpu, proc, 1);
             preempt |= cur != NULL && proc->state == PROC_READY &&
                        actual_priority(cur) > actual_priority(proc);
         }
-        //printf("ewfwfw2\n");
+        //for normal unblocking
         while (!prio_q_empty(cpu->blocked)) {
             /* We can stop ff process at head of queue should not be unblocked
              */
@@ -274,12 +236,9 @@ extern int process_simulate(processor_t *cpu) {
             preempt |= cur != NULL && proc->state == PROC_READY &&
                     actual_priority(cur) > actual_priority(proc);
         }
-        //printf("ewfwfw3\n");
 
         /* Step 2: Update current running process
          */
-
-
         if (cur != NULL) {
             cur->duration--;
             cpu_quantum--;
@@ -287,19 +246,27 @@ extern int process_simulate(processor_t *cpu) {
             /* Process stops running if it is preempted, has used up their quantum, or has completed its DOOP
             */
             if ((cur->duration == 0 || cpu_quantum == 0 ||  preempt) ||  cur->code[cur->ip].op==OP_SEND || cur->code[cur->ip].op==OP_RECV ) {
+                //if its send then invoke send function
                 if(cur->code[cur->ip].op==OP_SEND){
+
+                    //change state and print
                     cur->state=PROC_BLOCKED_SEND;
                     print_process(cpu,cur);
+
+                    //invoke
                     send(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
-                    cur = NULL;
-                }else if(cur->code[cur->ip].op==OP_RECV){
-                    //tprintf("svsv\n");
+                    cur = NULL; //for next process to run
+                }else if(cur->code[cur->ip].op==OP_RECV){ //if recv then invoke recv function
+
+                    //change state and print
                     cur->state=PROC_BLOCKED_RECV;
                     print_process(cpu,cur);
+
+                    //invoke
                     recv(messageFacility,cur,cur->code[cur->ip].addressNodeId,cur->code[cur->ip].addressProcessId);
-                    cur = NULL;
+                    cur = NULL; //for next process to run
                 }
-                 else {
+                 else {//insert again as process stops running if it is preempted, has used up their quantum, or has completed its DOOP, and its not send/recv
                     insert_in_queue(cpu, cur, cur->duration == 0);
                     cur = NULL;
                 }
@@ -312,21 +279,16 @@ extern int process_simulate(processor_t *cpu) {
          */
         if (cur == NULL && !prio_q_empty(cpu->ready)) {
             cur = prio_q_remove(cpu->ready);
-            //printf("hsdjkhskdf %d\n", cpu->clock_time - cur->enqueue_time);
-            //if(cur->code[cur->ip].op==OP_DOOP){
                 cur->wait_time += cpu->clock_time - cur->enqueue_time;
-            //}
-
             cpu_quantum = quantum;
             cur->state = PROC_RUNNING;
             print_process(cpu, cur);
         }
-        //printf("fwefew\n");
+        //call barrier to synchronize clocks
         barrier_wait(barr);
         cpu->clock_time++;
     }
-    barrier_done(barr2);
-    barrier_done(barr);
+    barrier_done(barr);//done with barrier so decrement max_threads count inside barrier.
 
     /* next clock tick
      */
