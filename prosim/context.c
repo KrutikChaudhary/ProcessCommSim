@@ -74,7 +74,6 @@ extern context *context_load(FILE *fin) {
                 cur->code[i].op = j;
                 if(j == OP_SEND || j == OP_RECV){
                     int address;
-                    //printf("dj\n");
                     if (fscanf(fin, "%d", &address) < 1) {
                         fprintf(stderr, "Bad input: Expecting argument to op on line %d in %s\n",
                                 i + 1, cur->name);
